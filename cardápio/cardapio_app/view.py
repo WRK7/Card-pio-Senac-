@@ -112,7 +112,7 @@ class LoginView(QMainWindow):
         if result:
             user_id, tipo = result
             if tipo == "admin":
-                self.admin_view = AdminView(self.model, user_id)  # Corrigido: passa user_id
+                self.admin_view = AdminView(self.model, user_id)  
                 self.admin_view.show()
                 self.close()
             elif tipo == "cliente":
@@ -352,15 +352,15 @@ class AdminView(QMainWindow):
         arquivo, _ = QFileDialog.getOpenFileName(self, "Selecionar Imagem", "", "Imagens (*.png *.jpg *.jpeg)")
         if arquivo:
             nome_arquivo = os.path.basename(arquivo)
-            destino = os.path.abspath(os.path.join("imagens", nome_arquivo))  # Caminho absoluto do destino
+            destino = os.path.abspath(os.path.join("imagens", nome_arquivo))  
             os.makedirs("imagens", exist_ok=True)
-            arquivo_absoluto = os.path.abspath(arquivo)  # Caminho absoluto do arquivo selecionado
+            arquivo_absoluto = os.path.abspath(arquivo)  
             if arquivo_absoluto != destino:
                 shutil.copy(arquivo_absoluto, destino)
                 print(f"Imagem copiada para: {destino}")
             else:
                 print(f"Imagem já está em: {destino}")
-            self.imagem_path = nome_arquivo  # Salva só o nome do arquivo
+            self.imagem_path = nome_arquivo  
             self.label_imagem.setText(f"Imagem: {nome_arquivo}")
 
     def adicionar_item(self):
@@ -736,7 +736,7 @@ class EditarItemDialog(QDialog):
                 print(f"Imagem copiada para: {destino}")
             else:
                 print(f"Imagem já está em: {destino}")
-            self.imagem_path = nome_arquivo  # Salva só o nome do arquivo
+            self.imagem_path = nome_arquivo  
             self.label_imagem.setText(f"Imagem: {nome_arquivo}")
 
     def salvar_alteracoes(self):
@@ -976,20 +976,20 @@ class GerenciarMesasDialog(QDialog):
         self.form_layout = QVBoxLayout()
         self.form_layout.setSpacing(15)
 
-        # Label e campo para número de mesas
+        
         self.label_mesas = QLabel("Número Total de Mesas:")
         self.entrada_mesas = QSpinBox()
-        self.entrada_mesas.setMinimum(1)  # Valor mínimo
-        self.entrada_mesas.setMaximum(100)  # Valor máximo
-        self.entrada_mesas.setValue(self.model.total_mesas)  # Define o valor inicial
-        self.entrada_mesas.setFixedHeight(40)  # Tamanho fixo para visibilidade
+        self.entrada_mesas.setMinimum(1)  
+        self.entrada_mesas.setMaximum(100)  
+        self.entrada_mesas.setValue(self.model.total_mesas)  
+        self.entrada_mesas.setFixedHeight(40)  
 
-        # Botão para salvar
+        
         self.botao_salvar = QPushButton("Salvar")
         self.botao_salvar.setMinimumHeight(45)
         self.botao_salvar.clicked.connect(self.salvar_mesas)
 
-        # Adiciona widgets ao layout
+       
         self.form_layout.addWidget(self.label_mesas)
         self.form_layout.addWidget(self.entrada_mesas)
         self.form_layout.addWidget(self.botao_salvar)
@@ -997,7 +997,7 @@ class GerenciarMesasDialog(QDialog):
         self.layout.addWidget(self.container)
         self.setLayout(self.layout)
 
-        # Estilização simplificada para evitar conflitos
+        
         self.setStyleSheet("""
             QDialog { background-color: #f5f6fa; }
             QLabel { font-size: 20px; color: #2f3542; }
@@ -1083,7 +1083,7 @@ class ConfirmarPedidoDialog(QDialog):
         mesas_ocupadas_por_outros = self.model.listar_mesas_ocupadas_por_outros(self.cliente_id)
         mesas_do_cliente = self.model.listar_mesas_ocupadas_por_cliente(self.cliente_id)
 
-        if mesas_do_cliente:  # Cliente já tem uma mesa ocupada
+        if mesas_do_cliente:  
             mesa_atual = mesas_do_cliente[0]  # Assume que só há uma mesa por cliente
             texto = f"Mesa {mesa_atual} (Sua Mesa)"
             self.combo_mesa.addItem(texto, userData=mesa_atual)
@@ -1177,7 +1177,7 @@ class ComandaDialog(QDialog):
 
         # Ordenar mesas
         for mesa in sorted(pedidos_por_mesa.keys()):
-            # Título da mesa
+            
             mesa_titulo = QListWidgetItem(f"Mesa {mesa} ({'Ocupada' if mesa in mesas_ocupadas else 'Livre'})")
             mesa_titulo.setBackground(Qt.lightGray)
             mesa_titulo.setFont(QFont("Arial", 14, QFont.Bold))
@@ -1314,17 +1314,17 @@ class HistoricoDialog(QDialog):
             id, item_nome, quantidade, preco, mesa, forma_pagamento, status = pedido
             texto = f"{item_nome} | Qtd: {quantidade} | R${preco:.2f} | Mesa {mesa} | {forma_pagamento} | {status}"
             
-            # Widget personalizado
+            
             item_widget = QWidget()
             item_layout = QHBoxLayout()
             item_layout.setContentsMargins(5, 5, 5, 5)
-            item_layout.setSpacing(10)  # Espaçamento fixo e pequeno
+            item_layout.setSpacing(10)  
             
-            # Label com o texto
+            
             item_label = QLabel(texto)
             item_label.setWordWrap(True)
-            item_label.setMinimumWidth(700)  # Largura suficiente pro texto
-            item_label.setMaximumWidth(800)  # Limite pra não invadir o botão
+            item_label.setMinimumWidth(700)  
+            item_label.setMaximumWidth(800)  
             item_label.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
             item_layout.addWidget(item_label)
             
@@ -1336,7 +1336,7 @@ class HistoricoDialog(QDialog):
                 botao_cancelar.clicked.connect(lambda checked, pid=id: self.cancelar_pedido(pid))
                 item_layout.addWidget(botao_cancelar)
             else:
-                item_layout.addSpacing(120)  # Espaço fixo pro alinhamento
+                item_layout.addSpacing(120)  
             
             item_widget.setLayout(item_layout)
             

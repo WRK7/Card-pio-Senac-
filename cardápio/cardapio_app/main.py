@@ -12,6 +12,6 @@ if __name__ == "__main__":
     try:
         exit_code = app.exec()
     finally:
-        model.limpar_historico_ao_fechar()  # Limpa os pedidos
-        model.fechar()  # Fecha a conexão
+        model.limpar_historico_ao_fechar()
+        model.fechar() 
         sys.exit(exit_code)

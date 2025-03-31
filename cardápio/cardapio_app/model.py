@@ -14,17 +14,17 @@ class CardapioModel:
         self.conectar()
 
     def conectar(self):                 
-        try:                            # Tenta fazer a conexão
-            self.conn = mysql.connector.connect(  # Cria a conexão com os parâmetros
-                host='localhost',       # Endereço do servidor MySQL (local)
-                user='root',            # Usuário do MySQL (ajuste se tiver outro)
-                password='',            # Senha do MySQL (vazia aqui, ajuste se tiver)
-                database='cardapio_app' # Nome do banco de dados
+        try:                            
+            self.conn = mysql.connector.connect(  
+                host='localhost',       
+                user='root',            
+                password='',            
+                database='cardapio_app' 
             )
-            self.cursor = self.conn.cursor()  # Cria o cursor pra executar comandos SQL
-            print('Conectado ao MySQL!')      # Confirma no console que conectou
-        except Error as e:                    # Se der erro na conexão
-            print(f'Erro ao conectar: {e}')   # Mostra o erro no console
+            self.cursor = self.conn.cursor()  
+            print('Conectado ao MySQL!')      
+        except Error as e:                   
+            print(f'Erro ao conectar: {e}')   
 
     def validar_login(self, username, password):
         try:
@@ -40,21 +40,21 @@ class CardapioModel:
             return None
 
     def adicionar_item(self, nome, preco, imagem, categoria):  
-        try:                            # Tenta executar a query
-            # Novo: Busca o ID da categoria pelo nome
+        try:                           
+           
             self.cursor.execute("SELECT id FROM categorias WHERE nome = %s", (categoria,))
-            categoria_id = self.cursor.fetchone()  # Pega o ID da categoria
-            if not categoria_id:        # Se a categoria não existe
+            categoria_id = self.cursor.fetchone()  
+            if not categoria_id:       
                 raise Error(f"Categoria '{categoria}' não encontrada!")
-            categoria_id = categoria_id[0]  # Extrai o ID da tupla
+            categoria_id = categoria_id[0]  
 
             query = "INSERT INTO itens (nome, preco, imagem, categoria_id) VALUES (%s, %s, %s, %s)"
-            valores = (str(nome), float(preco), str(imagem) if imagem else None, categoria_id)  # Converte valores, inclui categoria_id
-            self.cursor.execute(query, valores)  # Executa a query com os valores
-            self.conn.commit()          # Salva as mudanças no banco
-            print(f"Item adicionado: {nome} na categoria {categoria}")  # Confirma no console
-        except Error as e:            # Se der erro
-            print(f"Erro ao adicionar item: {e}")  # Mostra o erro
+            valores = (str(nome), float(preco), str(imagem) if imagem else None, categoria_id)  
+            self.cursor.execute(query, valores)  
+            self.conn.commit()          
+            print(f"Item adicionado: {nome} na categoria {categoria}")  
+        except Error as e:           
+            print(f"Erro ao adicionar item: {e}") 
 
     def listar_itens(self, termo_busca=None):
         try:
@@ -78,7 +78,7 @@ class CardapioModel:
 
     def remover_item(self, id):
         try:
-            # Conta todos os pedidos associados ao item, independentemente do status
+            
             self.cursor.execute("""
                 SELECT COUNT(*) 
                 FROM pedidos 
@@ -88,7 +88,7 @@ class CardapioModel:
             if pedidos_count > 0:
                 raise Error("Item não pode ser removido porque possui pedidos no histórico.")
             
-            # Remove o item se não houver pedidos
+            
             query = "DELETE FROM itens WHERE id = %s"
             self.cursor.execute(query, (id,))
             self.conn.commit()
@@ -99,30 +99,30 @@ class CardapioModel:
             return False
 
     def atualizar_item(self, id, nome, preco, imagem, categoria):  
-        try:                            # Tenta executar a query
-            # Novo: Busca o ID da categoria pelo nome
+        try:                            
+            
             self.cursor.execute("SELECT id FROM categorias WHERE nome = %s", (categoria,))
-            categoria_id = self.cursor.fetchone()  # Pega o ID da categoria
-            if not categoria_id:        # Se a categoria não existe
+            categoria_id = self.cursor.fetchone()  
+            if not categoria_id:        
                 raise Error(f"Categoria '{categoria}' não encontrada!")
-            categoria_id = categoria_id[0]  # Extrai o ID da tupla
+            categoria_id = categoria_id[0]  
 
             query = "UPDATE itens SET nome = %s, preco = %s, imagem = %s, categoria_id = %s WHERE id = %s"
             valores = (str(nome), float(preco), str(imagem) if imagem else None, categoria_id, id)
-            self.cursor.execute(query, valores)  # Executa a query com os valores
-            self.conn.commit()          # Salva as mudanças
+            self.cursor.execute(query, valores)  
+            self.conn.commit()          
             print(f"Item ID {id} atualizado: {nome}, {preco}, {imagem}, Categoria: {categoria}")
-        except Error as e:            # Se der erro
+        except Error as e:            
             print(f"Erro ao atualizar item: {e}")
 
     def adicionar_pedido(self, cliente_id, item_id, quantidade, mesa, forma_pagamento):  
-        try:                            # Tenta executar a query
+        try:                            
             query = "INSERT INTO pedidos (cliente_id, item_id, quantidade, mesa, forma_pagamento) VALUES (%s, %s, %s, %s, %s)"
-            valores = (cliente_id, item_id, quantidade, mesa, forma_pagamento)  # Valores do pedido
-            self.cursor.execute(query, valores)  # Executa a query
-            self.conn.commit()          # Salva as mudanças
+            valores = (cliente_id, item_id, quantidade, mesa, forma_pagamento)  
+            self.cursor.execute(query, valores)  
+            self.conn.commit()          
             print(f"Pedido adicionado: Cliente {cliente_id}, Item {item_id}, Mesa {mesa}, Pagamento {forma_pagamento}")
-        except Error as e:            # Se der erro
+        except Error as e:            
             print(f"Erro ao adicionar pedido: {e}")
 
     def cadastrar_usuario(self, nome, cpf, email, username, password, tipo):
@@ -148,7 +148,7 @@ class CardapioModel:
             return True, "Usuário cadastrado com sucesso!"
         except Error as e:
             print(f"Erro ao cadastrar usuário: {e}")
-            return False, f"Erro ao cadastrar: {e}"  # Sempre retorna tupla
+            return False, f"Erro ao cadastrar: {e}"  
 
     def carregar_total_mesas(self):
         try:
@@ -214,20 +214,20 @@ class CardapioModel:
             return False
 
     def listar_categorias(self):
-        try:                            # Tenta executar a query
-            self.cursor.execute("SELECT nome FROM categorias ORDER BY nome")  # Seleciona nomes das categorias
-            categorias = [row[0] for row in self.cursor.fetchall()]  # Converte pra lista de strings
-            return categorias           # Retorna a lista
-        except Error as e:            # Se der erro
+        try:                            
+            self.cursor.execute("SELECT nome FROM categorias ORDER BY nome")  
+            categorias = [row[0] for row in self.cursor.fetchall()]  
+            return categorias           
+        except Error as e:            
             print(f"Erro ao listar categorias: {e}")
-            return []                 # Retorna lista vazia em caso de erro
+            return []                 
 
     def adicionar_categoria(self, nome):
         try:
             self.cursor.execute("INSERT INTO categorias (nome) VALUES (%s)", (nome,))
             self.conn.commit()
             print(f"Categoria adicionada: {nome}")
-            return True  # Retorna sucesso
+            return True  
         except Error as e:
             if "Duplicate entry" in str(e):
                 print(f"Erro: Categoria '{nome}' já existe!")
@@ -241,9 +241,9 @@ class CardapioModel:
             categoria = item.text()
             if self.model.remover_categoria(categoria):
                 self.atualizar_lista_categorias()
-                self.parent().atualizar_combo_categorias()  # Atualiza combo do AdminView
-                self.parent().atualizar_filtro_categorias()  # Atualiza filtro do AdminView
-                self.parent().atualizar_lista()  # Atualiza a lista de itens
+                self.parent().atualizar_combo_categorias()  
+                self.parent().atualizar_filtro_categorias()  
+                self.parent().atualizar_lista()  
                 QMessageBox.information(self, "Sucesso", "Categoria removida!")
             else:
                 QMessageBox.warning(self, "Erro", "Categoria não pode ser removida: possui itens associados!")
@@ -274,7 +274,7 @@ class CardapioModel:
 
 
 
-        # Função pra listar itens filtrados por categoria
+        
     
     def remover_pedido(self, pedido_id):
         try:
@@ -314,14 +314,14 @@ class CardapioModel:
 
     def limpar_historico_ao_fechar(self):
         try:
-            # Atualiza todos os pedidos "Pendente" ou "Preparando" para "Cancelado"
+            
             self.cursor.execute("""
                 UPDATE pedidos 
                 SET status = 'Cancelado' 
                 WHERE status IN ('Pendente', 'Preparando')
             """)
             
-            # Remove todos os pedidos "Entregue"
+            
             self.cursor.execute("""
                 DELETE FROM pedidos 
                 WHERE status = 'Entregue'
@@ -372,7 +372,7 @@ class CardapioModel:
 
     def cancelar_pedido(self, pedido_id, cliente_id):
         try:
-            # Verifica se o pedido é do cliente e está "Pendente"
+            
             self.cursor.execute("""
                 SELECT status FROM pedidos 
                 WHERE id = %s AND cliente_id = %s
@@ -410,7 +410,7 @@ class CardapioModel:
 
     def verificar_pedidos_dia(self, data=None):
         try:
-            # Lista todos os pedidos, já que não temos data_hora
+            
             self.cursor.execute("""
                 SELECT p.id, i.nome, p.quantidade, i.preco, p.mesa, p.forma_pagamento, COALESCE(p.status, 'Pendente') AS status
                 FROM pedidos p
@@ -440,7 +440,7 @@ class CardapioModel:
 
     def limpar_historico_ao_fechar(self):
         try:
-            # Apenas remove pedidos "Pendente" ou "Preparando", mantendo "Entregue"
+            
             self.cursor.execute("""
                 DELETE FROM pedidos 
                 WHERE status IN ('Pendente', 'Preparando')
@@ -463,8 +463,8 @@ class CardapioModel:
             print(f"Erro ao listar pedidos por mesa: {e}")
             return []
     
-    def fechar(self):                   # Função pra fechar a conexão com o banco
-        if self.conn and self.conn.is_connected():  # Verifica se há conexão ativa
-            self.cursor.close()         # Fecha o cursor
-            self.conn.close()           # Fecha a conexão
-            print("Conexão fechada.")   # Confirma no console
+    def fechar(self):                   
+        if self.conn and self.conn.is_connected():  
+            self.cursor.close()         
+            self.conn.close()           
+            print("Conexão fechada.")   
